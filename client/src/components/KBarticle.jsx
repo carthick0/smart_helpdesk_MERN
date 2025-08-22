@@ -30,7 +30,7 @@ export default function KBArticleView() {
 
   if (loading) return <p>Loading article...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
-  if (!article) return <p>No article found.</p>;
+  if (!article) return <p>No article found..</p>;
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 border rounded bg-white">
@@ -43,8 +43,7 @@ export default function KBArticleView() {
       <Link
         to="/"
         className="text-blue-600 hover:underline"
-      >
-        ← Back to Dashboard
+      >← Back to Dashboard
       </Link>
     </div>
   );
