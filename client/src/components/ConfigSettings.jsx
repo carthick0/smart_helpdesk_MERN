@@ -1,82 +1,125 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/useAuth";
 
 export default function ConfigSettings() {
   const { token } = useAuth();
-  const [autoCloseEnabled, setAutoCloseEnabled] = useState(false);
-  const [confidenceThreshold, setConfidenceThreshold] = useState(0.7);
+  const backendUrl ="http://localhost:8000"
+  //import.meta.env.VITE_BACKEND_URL 
+  const [autoCloseEnabled, setAutoCloseEnabled] = useState(true);
+  const [confidenceThreshold, setConfidenceThreshold] = useState(0.78);
+  const [slaHours, setSlaHours] = useState(24);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [infoMessage, setInfoMessage] = useState("");
 
+  // Fetch current config on mount
   useEffect(() => {
     async function fetchConfig() {
       setLoading(true);
       setError("");
-      const res = await fetch("http://localhost:8000/api/config", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) {
-        setError("Failed to fetch config");
-        setLoading(false);
-        return;
+      try {
+        const res = await fetch(`${backendUrl}/api/config`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch config");
+        const data = await res.json();
+        setAutoCloseEnabled(data.autoCloseEnabled);
+        setConfidenceThreshold(data.confidenceThreshold);
+        setSlaHours(data.slaHours);
+      } catch (err) {
+        setError(err.message);
       }
-      const data = await res.json();
-      setAutoCloseEnabled(data.autoCloseEnabled);
-      setConfidenceThreshold(data.confidenceThreshold);
       setLoading(false);
     }
     fetchConfig();
-  }, [token]);
+  }, [backendUrl, token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
-    const res = await fetch("http://localhost:8000/api/config", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ autoCloseEnabled, confidenceThreshold }),
-    });
-    if (res.ok) setSuccess("Settings updated.");
-    else setError("Failed to update settings.");
+    setInfoMessage("");
+    try {
+      const res = await fetch(`${backendUrl}/api/config`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          autoCloseEnabled,
+          confidenceThreshold: Number(confidenceThreshold),
+          slaHours: Number(slaHours),
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to update config");
+      }
+      setInfoMessage("Configuration updated successfully.");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading configuration...</p>;
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white border rounded">
-      <h2 className="text-2xl font-semibold mb-4">Agent Settings</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-md mx-auto p-6 border rounded shadow bg-white mt-8">
+      <h2 className="text-2xl font-semibold mb-4">Agent Configuration</h2>
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 text-red-800 border border-red-300 rounded">
+          {error}
+        </div>
+      )}
+      {infoMessage && (
+        <div className="mb-4 p-3 bg-green-100 text-green-800 border border-green-300 rounded">
+          {infoMessage}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block font-medium">Auto-Close Enabled</label>
-          <input
-            type="checkbox"
-            checked={autoCloseEnabled}
-            onChange={e => setAutoCloseEnabled(e.target.checked)}
-            className="ml-2"
-          /> Enable
+          <label className="inline-flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={autoCloseEnabled}
+              onChange={(e) => setAutoCloseEnabled(e.target.checked)}
+              className="form-checkbox h-5 w-5 text-green-600"
+            />
+            <span>Enable Auto Close</span>
+          </label>
         </div>
         <div>
-          <label className="block font-medium">Confidence Threshold</label>
+          <label className="block mb-1 font-medium">Confidence Threshold (0–1)</label>
           <input
             type="number"
-            min={0}
-            max={1}
-            step={0.01}
+            step="0.01"
+            min="0"
+            max="1"
             value={confidenceThreshold}
-            onChange={e => setConfidenceThreshold(Number(e.target.value))}
-            className="border px-2 py-1 rounded"
+            onChange={(e) => setConfidenceThreshold(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+            required
           />
         </div>
-        <button type="submit" className="px-4 py-2 bg-blue-800 text-white rounded">
-          Save Settings
+        <div>
+          <label className="block mb-1 font-medium">SLA Hours</label>
+          <input
+            type="number"
+            min="0"
+            value={slaHours}
+            onChange={(e) => setSlaHours(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+        >
+          Save Configuration
         </button>
-        {error && <p className="text-red-600">{error}</p>}
-        {success && <p className="text-green-600">{success}</p>}
       </form>
     </div>
   );

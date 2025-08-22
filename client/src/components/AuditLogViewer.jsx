@@ -5,11 +5,12 @@ export default function AuditLogViewer({ ticketId }) {
   const { token } = useAuth();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  
+  const backendUrl =import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     async function fetchAudit() {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/api/tickets/${ticketId}/audit`, {
+      const res = await fetch(`${backendUrl}/api/tickets/${ticketId}/audit`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
@@ -21,7 +22,7 @@ export default function AuditLogViewer({ ticketId }) {
       setLoading(false);
     }
     fetchAudit();
-  }, [token, ticketId]);
+  }, [token, ticketId, backendUrl]);
 
   if (loading) return <p>Loading audit log…</p>;
   if (!logs.length) return <p>No audit entries.</p>;

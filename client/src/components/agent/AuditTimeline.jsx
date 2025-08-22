@@ -7,12 +7,15 @@ export default function AuditTimeline({ ticketId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  
+  const backendUrl =import.meta.env.VITE_BACKEND_URL;
+
   useEffect(() => {
     async function fetchAudit() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`http://localhost:8000/api/${ticketId}/audit`, {
+        const res = await fetch(`${backendUrl}/api/${ticketId}/audit`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch audit logs");
@@ -24,7 +27,7 @@ export default function AuditTimeline({ ticketId }) {
       setLoading(false);
     }
     fetchAudit();
-  }, [ticketId, token]);
+  }, [backendUrl, ticketId, token]);
 
   if (loading) return <p>Loading audit timeline...</p>;
   if (error) return <p className="text-red-600">{error}</p>;

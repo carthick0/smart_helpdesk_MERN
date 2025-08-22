@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/useAuth"; // Import your auth hook
+import { useAuth } from "../context/useAuth";
+
+
+const backendUrl =import.meta.env.VITE_BACKEND_URL 
 
 export default function Register({ onSuccess }) {
-  const { login } = useAuth(); // Access login method from context
+  const { login } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,7 +19,8 @@ export default function Register({ onSuccess }) {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:8000/api/auth/register", {
+      // Register user
+      const res = await fetch(`${backendUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, role }),
@@ -30,21 +34,22 @@ export default function Register({ onSuccess }) {
       }
 
       // Auto-login after successful registration
-      const loginRes = await fetch("http://localhost:8000/api/auth/login", {
+      const loginRes = await fetch(`${backendUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       if (!loginRes.ok) {
-        throw new Error("Auto-login failed");
+        setError("Auto-login failed");
+        setLoading(false);
+        return;
       }
 
       const data = await loginRes.json();
+      login(data.token, data.user.role);
 
-      login(data.token, data.user.role); // Set auth context
-
-      onSuccess && onSuccess(); // Optional callback
+      if (onSuccess) onSuccess();
     } catch (err) {
       setError(err.message || "An error occurred");
     }
@@ -52,8 +57,7 @@ export default function Register({ onSuccess }) {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow">
-        
+    <div className="max-w-md mx-auto mt-10 p-6 border border-gray-300 rounded shadow">
       <h2 className="text-2xl font-semibold mb-6 text-center">Register</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

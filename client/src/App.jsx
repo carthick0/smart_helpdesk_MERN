@@ -7,9 +7,11 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/useAuth";
+
 import AuthPage from "./pages/Authpage";
 import TicketForm from "./components/TicketForm";
 import KBList from "./components/KBlist";
+import KBArticleView from "./components/KBarticle"; 
 import ConfigSettings from "./components/ConfigSettings";
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
@@ -34,6 +36,9 @@ function AppContent() {
     <>
       <Navbar />
       <Routes>
+        {/* KB Article view accessible to all authenticated roles */}
+        <Route path="/kb/:id" element={<KBArticleView />} />
+
         {/* User routes */}
         {role === "user" && (
           <>
@@ -45,7 +50,7 @@ function AppContent() {
         )}
 
         {/* Agent routes */}
-       {role === "agent" && (
+        {role === "agent" && (
           <>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />

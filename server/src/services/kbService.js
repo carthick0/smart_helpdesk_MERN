@@ -1,9 +1,8 @@
 import KBRepository from "../repositories/kbRepository.js";
 
 class KBService {
-  // Receives just the query string (not req or res)
+  
   async searchKB(query) {
-    // delegate search logic to repository
     return KBRepository.search(query);
   }
 
@@ -15,6 +14,9 @@ class KBService {
     return KBRepository.update(id, data);
   }
 
+  async getOneArticle(id){
+    return KBRepository.findById(id);
+  }
   async deleteArticle(id) {
     return KBRepository.delete(id);
   }

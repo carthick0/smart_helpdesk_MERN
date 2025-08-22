@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/useAuth";
+import { Link } from "react-router-dom";
 
 export default function TicketForm() {
   const { token, logout } = useAuth();
@@ -17,16 +18,13 @@ export default function TicketForm() {
   const [ticketsError, setTicketsError] = useState("");
   const [expandedTicketIds, setExpandedTicketIds] = useState(new Set());
 
-  // Fetch user tickets on component mount
   useEffect(() => {
     async function fetchUserTickets() {
       setLoadingTickets(true);
       setTicketsError("");
       try {
         const res = await fetch("http://localhost:8000/api/tickets", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch tickets");
         const data = await res.json();
@@ -51,7 +49,6 @@ export default function TicketForm() {
     });
   };
 
-  // Submit ticket handler with bug fix: uses updated ticket returned after triage
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -77,15 +74,10 @@ export default function TicketForm() {
       }
 
       const data = await res.json();
-
-      // AI draft reply and KB articles from agent suggestion
       setAiReply(data.agentSuggestion?.draftReply || "");
       setKbArticles(data.agentSuggestion?.articleIds || []);
-
-      // Use updated ticket returned after triage with correct status
       setUserTickets((prev) => [data.ticket, ...prev]);
 
-      // Clear form inputs
       setTitle("");
       setDescription("");
       setCategory("billing");
@@ -106,10 +98,7 @@ export default function TicketForm() {
         </button>
       </div>
 
-      {/* Ticket Creation Form */}
-      <h2 className="text-2xl font-semibold mb-6 text-center">
-        Create Ticket
-      </h2>
+      <h2 className="text-2xl font-semibold mb-6 text-center">Create Ticket</h2>
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block mb-1 font-medium">Title:</label>
@@ -152,7 +141,6 @@ export default function TicketForm() {
         </button>
       </form>
 
-      {/* Error message */}
       {error && <p className="mt-4 text-red-600">{error}</p>}
 
       {/* AI Draft Reply */}
@@ -160,20 +148,19 @@ export default function TicketForm() {
         <div className="mt-8 p-4 border border-gray-300 rounded bg-gray-50">
           <h3 className="text-xl font-semibold mb-2">AI Draft Reply</h3>
           <pre className="whitespace-pre-wrap">{aiReply}</pre>
+
           {kbArticles.length > 0 && (
             <>
               <h4 className="mt-4 font-medium">Referenced KB Articles</h4>
               <ul className="list-disc list-inside">
                 {kbArticles.map((id, i) => (
                   <li key={id}>
-                    <a
-                      href={`http://localhost:8080/api/kb/${id}`}
-                      target="_blank"
-                      rel="noreferrer"
+                    <Link
+                      to={`/kb/${id}`}
                       className="text-blue-600 hover:underline"
                     >
                       Article #{i + 1}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -226,9 +213,8 @@ export default function TicketForm() {
                           <li key={i}>
                             <p className="whitespace-pre-wrap">{reply.message}</p>
                             <p className="text-xs text-gray-600">
-                              By:{" "}
-                              {reply.author?.name || reply.author || "Unknown"} on{" "}
-                              {new Date(reply.date).toLocaleString()}
+                              By: {reply.author?.name || reply.author || "Unknown"}{" "}
+                              on {new Date(reply.date).toLocaleString()}
                             </p>
                           </li>
                         ))}

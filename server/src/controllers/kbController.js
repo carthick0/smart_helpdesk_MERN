@@ -1,7 +1,7 @@
 import KBService from "../services/kbService.js";
 
 class KBController {
-  // Controller extracts req.query.query and passes to service
+  
   async searchKB(req, res) {
     try {
       const query = req.query.query || "";
@@ -39,6 +39,16 @@ class KBController {
       if (!deleted) return res.status(404).json({ error: "Article not found" });
       res.json({ message: "Article deleted successfully" });
     } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+  async getOneAtricle(req,res){
+    try {
+      const {id}=req.params;
+      const article=await KBService.getOneArticle(id);
+      if (!article) return res.status(404).json({ error: "Article not found" });
+      res.json(article);  
+    } catch (error) {
       res.status(500).json({ error: err.message });
     }
   }

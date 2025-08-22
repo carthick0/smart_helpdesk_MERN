@@ -7,5 +7,5 @@ router.get("/", auth('admin'), KBController.searchKB);
 router.post("/", auth(["admin"]), KBController.createArticle);
 router.put("/:id", auth(["admin"]), KBController.updateArticle);
 router.delete("/:id", auth(["admin"]), KBController.deleteArticle);
-
+router.get("/:id",KBController.getOneAtricle);
 export default router;

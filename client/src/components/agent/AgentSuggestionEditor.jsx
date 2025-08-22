@@ -6,13 +6,15 @@ export default function AgentSuggestionEditor({ suggestion, ticketId }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  
+  const backendUrl =import.meta.env.VITE_BACKEND_URL;
 
   const handleSend = async () => {
     setSaving(true);
     setError("");
     setMessage("");
     try {
-      const res = await fetch(`http://localhost:8000/api/tickets/${ticketId}/reply`, {
+      const res = await fetch(`${backendUrl}/api/tickets/${ticketId}/reply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

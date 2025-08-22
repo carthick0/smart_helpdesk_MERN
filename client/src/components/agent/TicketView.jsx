@@ -11,23 +11,24 @@ export default function TicketView() {
   const [suggestion, setSuggestion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     async function fetchTicketAndSuggestion() {
       setLoading(true);
       setError("");
 
       try {
-        // Fetch ticket detail
-        const res = await fetch(`http://localhost:8000/api/tickets/${id}`, {
+        //  ticket detail
+        const res = await fetch(`${backendUrl}/api/tickets/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch ticket");
         const data = await res.json();
         setTicket(data);
 
-        // Fetch agent suggestion
-        const sugRes = await fetch(`http://localhost:8000/api/agent/suggestion/${id}`, {
+        // agent suggestion
+        const sugRes = await fetch(`${backendUrl}/api/agent/suggestion/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (sugRes.ok) {
@@ -44,7 +45,7 @@ export default function TicketView() {
     }
 
     fetchTicketAndSuggestion();
-  }, [id, token]);
+  }, [backendUrl, id, token]);
 
   if (loading) return <p>Loading ticket...</p>;
   if (error) return <p className="text-red-600">{error}</p>;

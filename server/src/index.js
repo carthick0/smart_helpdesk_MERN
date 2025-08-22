@@ -10,7 +10,7 @@ import kbRoutes from "./routes/kbRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import auditRoutes from "./routes/auditRoutes.js";
 import agentSuggestionRoutes from "./routes/agentSuggestionRoutes.js"
-
+import configRoutes from "./routes/configRoutes.js"
 const app = express();
 
 app.use(express.json());
@@ -30,6 +30,7 @@ app.use("/api/auth", userRoutes);
 app.use("/api/kb", kbRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api", auditRoutes); 
+app.use("/api/config",configRoutes)
 
 // Health checks
 app.get("/healthz", (req, res) => res.status(200).send("OK"));

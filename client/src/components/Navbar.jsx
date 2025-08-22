@@ -8,7 +8,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/"); // Redirect to login or home page after logout
+    navigate("/"); 
   };
 
   return (
@@ -23,7 +23,7 @@ export default function Navbar() {
             <Link to="/tickets" className="hover:underline">
               My Tickets
             </Link>
-            {/* Add more user links here */}
+           
           </>
         )}
 
@@ -32,7 +32,7 @@ export default function Navbar() {
             <Link to="/agent/dashboard" className="hover:underline">
               Agent Dashboard
             </Link>
-            {/* Add more agent links here */}
+           
           </>
         )}
 
@@ -44,7 +44,7 @@ export default function Navbar() {
             <Link to="/admin/config" className="hover:underline">
               Config Settings
             </Link>
-            {/* Add more admin links here */}
+            
           </>
         )}
       </div>

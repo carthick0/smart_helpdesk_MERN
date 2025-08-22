@@ -126,7 +126,7 @@ async createTicket({ title, description, category, createdBy }) {
     let autoClosed = false;
     console.log(`Confidence: ${confidence}, Threshold: ${CONFIDENCE_THRESHOLD}, AutoCloseEnabled: ${AUTO_CLOSE_ENABLED}`);
 
-    if (AUTO_CLOSE_ENABLED && confidence >= CONFIDENCE_THRESHOLD) {
+    if (AUTO_CLOSE_ENABLED && confidence >= 0.5) {
       console.log(`Auto-closing ticket ${ticket._id} with confidence ${confidence}`);
       await TicketRepository.update(ticket._id, { status: "resolved" });
       autoClosed = true;

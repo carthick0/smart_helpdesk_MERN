@@ -14,24 +14,29 @@ class TicketController {
   }
 
   // Get all tickets
-// Get tickets, optional filtering by status, assignee, etc.
+
 async getAllTickets(req, res) {
   try {
-    // Extract possible filters from query parameters
-    const { status, assignee, createdBy } = req.query;
-
-    // Pass filters object to service
+    const { status, assignee } = req.query;
     const filters = {};
+
     if (status) filters.status = status;
     if (assignee) filters.assignee = assignee;
-    if (createdBy) filters.createdBy = createdBy;
+
+    if (req.user.role === "user") {
+      filters.createdBy = req.user.id;
+    } else if (req.query.createdBy) {
+      filters.createdBy = req.query.createdBy;
+    }
 
     const tickets = await TicketService.getTickets(filters);
     return res.status(200).json(tickets);
   } catch (error) {
+    console.error("Error in getAllTickets:", error);  // <-- log full error stack
     return res.status(500).json({ error: error.message || "Error fetching tickets" });
   }
 }
+
 
   // Get ticket by ID
   async getTicketById(req, res) {
