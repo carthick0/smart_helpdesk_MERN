@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: "http://localhost:5173",   // replace with your frontend URL
+  origin: "https://smart-helpdesk-mern.vercel.app/",   
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true, // if you use cookies or auth headers
 }));
