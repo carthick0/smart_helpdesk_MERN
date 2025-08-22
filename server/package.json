@@ -3,8 +3,15 @@
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
+  "jest": {
+  "transform": {
+    "^.+\\.jsx?$": "babel-jest"
+  },
+  "testEnvironment": "node"
+},
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "jest"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -16,5 +23,12 @@
     "mongoose": "^8.17.2",
     "morgan": "^1.10.1",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.3",
+    "@babel/preset-env": "^7.28.3",
+    "babel-jest": "^30.0.5",
+    "jest": "^30.0.5",
+    "supertest": "^7.1.4"
   }
 }
