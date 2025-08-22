@@ -8,13 +8,13 @@ export default function KBArticleView() {
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+   const backendUrl =import.meta.env.VITE_BACKEND_URL 
   useEffect(() => {
     async function fetchArticle() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`http://localhost:8000/api/kb/${id}`, {
+        const res = await fetch(`${backendUrl}/api/kb/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch article");
@@ -26,7 +26,7 @@ export default function KBArticleView() {
       setLoading(false);
     }
     fetchArticle();
-  }, [id, token]);
+  }, [backendUrl, id, token]);
 
   if (loading) return <p>Loading article...</p>;
   if (error) return <p className="text-red-600">{error}</p>;

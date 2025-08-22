@@ -3,8 +3,7 @@ import { useAuth } from "../context/useAuth";
 
 export default function ConfigSettings() {
   const { token } = useAuth();
-  const backendUrl ="http://localhost:8000"
-  //import.meta.env.VITE_BACKEND_URL 
+  const backendUrl =import.meta.env.VITE_BACKEND_URL 
   const [autoCloseEnabled, setAutoCloseEnabled] = useState(true);
   const [confidenceThreshold, setConfidenceThreshold] = useState(0.78);
   const [slaHours, setSlaHours] = useState(24);

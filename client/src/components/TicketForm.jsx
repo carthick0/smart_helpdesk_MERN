@@ -3,8 +3,8 @@ import { useAuth } from "../context/useAuth";
 import { Link } from "react-router-dom";
 
 export default function TicketForm() {
-  const { token, logout } = useAuth();
-
+  const { token } = useAuth();
+   const backendUrl =import.meta.env.VITE_BACKEND_URL 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("billing");
@@ -23,7 +23,7 @@ export default function TicketForm() {
       setLoadingTickets(true);
       setTicketsError("");
       try {
-        const res = await fetch("http://localhost:8000/api/tickets", {
+        const res = await fetch(`${backendUrl}/api/tickets`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch tickets");
@@ -35,7 +35,7 @@ export default function TicketForm() {
       setLoadingTickets(false);
     }
     fetchUserTickets();
-  }, [token]);
+  }, [backendUrl, token]);
 
   const toggleExpand = (ticketId) => {
     setExpandedTicketIds((prev) => {
@@ -57,7 +57,7 @@ export default function TicketForm() {
     setKbArticles([]);
 
     try {
-      const res = await fetch("http://localhost:8000/api/tickets", {
+      const res = await fetch(`${backendUrl}/api/tickets`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,12 +90,7 @@ export default function TicketForm() {
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6">
       <div className="flex justify-end mb-4">
-        <button
-          onClick={logout}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
+
       </div>
 
       <h2 className="text-2xl font-semibold mb-6 text-center">Create Ticket</h2>
